@@ -1,0 +1,38 @@
+If someone can reach TCP 44818 on your plant floor, they can ask your PLC what it is, what firmware it runs, and what every single tag is called.
+
+No credentials required. That is not a vulnerability — that is the protocol working as designed.
+
+It is CIP: the Common Industrial Protocol. ODVA's object-oriented application layer, and the language most Rockwell gear speaks natively.
+
+WHERE YOU FIND IT
+Carried over EtherNet/IP on TCP 44818 (explicit messaging), UDP 2222 (cyclic I/O) and UDP 44818 (discovery). Also over DeviceNet, ControlNet and CompoNet. It sits at Purdue Levels 1–2 on ControlLogix, CompactLogix, Micro8xx and PowerFlex drives — which means water, power, manufacturing, pharma, and most discrete plants you can name.
+
+THE WHOLE PROTOCOL IN ONE SENTENCE
+Every CIP request — benign or hostile — is a SERVICE called on a CLASS : INSTANCE : ATTRIBUTE.
+
+Read a firmware revision → 0x0E on 0x01:1:7
+Halt a controller → 0x07 on the Identity object
+
+Same grammar. Different verb. Learn the triple and the protocol stops being opaque.
+
+So I built a poster for the lab wall.
+
+READ IT LEFT TO RIGHT, AS AN ATTACKER
+ListIdentity (0x0063) finds the controller and its firmware revision. Symbol object 0x6B dumps every tag name, which leaks the process design. RegisterSession (0x0065) takes no credentials. Then Write Tag 0x4D, Stop 0x07, or Reset 0x05 type 1 for factory defaults.
+
+READ IT RIGHT TO LEFT, AS A DEFENDER
+The same codes become the detection surface: Zeek ICSNPP cip.log fields, Suricata cip_service, Wireshark display filters, and the triage question that actually decides the ticket — was this write-class service issued by a sanctioned engineering workstation, inside a change window?
+
+TWO THINGS MOST CIP CHEAT SHEETS GET WRONG
+
+1. Service codes are class-scoped. 0x4E is Forward_Close on class 0x06, Read Holding Registers on the Modbus object 0x44, and Read-Modify-Write on Logix tags. A rule matching cip_service:0x4d without cip_class will also fire on Modbus reads. Go and check yours.
+
+2. The false-zero rule. Zero write/stop/reset services in a capture is a clean finding only when reads and Forward_Opens are non-zero in the same capture. Otherwise you have not shown the controller is untouched — you have shown your SPAN port is not working.
+
+Every hex value on the poster was verified against the Wireshark ENIP/CIP dissectors, the ODVA developers guide, and Rockwell's Logix 5000 Data Access manual. Two errors in my own reference notes got corrected on the way.
+
+Lab reference only — exercise it against equipment you are authorised to test. CIP writes move physical process.
+
+Print it at 18x24, stick it above the bench. Happy to share the file — say the word in the comments.
+
+#OTSecurity #ICS #EtherNetIP #CIP #ThreatHunting #IndustrialControlSystems #PLC #Rockwell #IncidentResponse #SCADA
