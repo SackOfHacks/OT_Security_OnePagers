@@ -78,12 +78,6 @@ are authorised to test — OT protocol writes move physical process, and a stop 
 a production controller is an outage, not a finding. These sheets contain no client data
 and no material from any engagement.
 
-## Contributing
-
-Adding a protocol: copy an existing sheet as the layout template, keep the panel skeleton
-above, and cite a dissector, specification or vendor document for every value you put on
-it. The PPTX is authoritative — regenerate the PDF and PNG from it so all three stay in
-step, and keep the version and date stamp in the footer current.
 
 ## Licence
 
