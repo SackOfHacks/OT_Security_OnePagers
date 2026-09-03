@@ -8,39 +8,47 @@ standing in a plant with no second monitor and no internet.
 
 <p align="center">
   <a href="./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pdf">
-    <img src="./CIP/CIP_EtherNetIP_Attack_Defend_Poster.png" width="720"
+    <img src="./CIP/CIP_EtherNetIP_Attack_Defend_Poster.png" width="400"
          alt="CIP / EtherNet/IP Attack &amp; Defend one-pager">
   </a>
+  &nbsp;&nbsp;
+  <a href="./ModBus/Modbus_Attack_Defend_Poster.pdf">
+    <img src="./ModBus/Modbus_Attack_Defend_Poster.png" width="400"
+         alt="Modbus Attack &amp; Defend one-pager">
+  </a>
   <br>
-  <em>CIP / EtherNet/IP — click for the full-resolution PDF</em>
+  <em>CIP / EtherNet/IP &nbsp;·&nbsp; Modbus — click either for the full-resolution PDF</em>
 </p>
 
 ## The sheets
 
-| Sheet | Protocol | Formats | Status |
-|---|---|---|---|
-| [**CIP**](./CIP/) | CIP / EtherNet/IP (ODVA) — service codes, object model, attack & defend | [PDF](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pdf) · [PNG](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.png) · [PPTX](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pptx) | v1.0 |
+| Sheet | Protocol | The one idea | Formats | Status |
+|---|---|---|---|---|
+| [**CIP**](./CIP/) | CIP / EtherNet/IP (ODVA) — service codes, object model, attack & defend | Every request is a `<SERVICE>` called on a `<CLASS>:<INSTANCE>:<ATTRIBUTE>` | [PDF](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pdf) · [PNG](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.png) · [PPTX](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pptx) | v1.0 |
+| [**Modbus**](./ModBus/) | Modbus TCP / RTU / ASCII (Modicon, 1979) — four data banks, function codes, attack & defend | Four data banks and one byte of intent — no users, no passwords, no sessions | [PDF](./ModBus/Modbus_Attack_Defend_Poster.pdf) · [PNG](./ModBus/Modbus_Attack_Defend_Poster.png) · [PPTX](./ModBus/Modbus_Attack_Defend_Poster.pptx) | v1.0 |
 
 More protocols land the same way. The layout is deliberately repeatable — read one sheet and
 you know where to look on every sheet after it.
 
 ## What's on a sheet
 
-Ten panels, always in the same order:
+Ten panels on the same skeleton, in the same order. Panels 2, 3 and 5 adapt to what the
+protocol actually has — CIP gets an object model and a connection chain, Modbus gets four
+data banks and a diagnostics sub-function table — but the reading order never moves.
 
 | # | Panel | What you get |
 |---|---|---|
-| 🎯 | **The one idea** | The single sentence that makes the rest of the protocol decode itself. For CIP: *"CIP is objects — every request is `<SERVICE>` on `<CLASS>:<INSTANCE>:<ATTRIBUTE>`."* |
-| 1 | **Where it lives** | Spec volumes, encapsulation stack, ports, Purdue level |
-| 2 | **The wire format** | The structure you actually have to decode, worked through a real example |
-| 3 | **Session & connection chain** | How a conversation gets established — and where it isn't authenticated |
+| 🎯 | **The one idea** | The single sentence that makes the rest of the protocol decode itself. CIP: *"every request is `<SERVICE>` on `<CLASS>:<INSTANCE>:<ATTRIBUTE>`."* Modbus: *"whoever can reach `tcp/502` is the master — the only question left is which function code, against which register."* |
+| 1 | **Where it lives** | Spec volumes, variants, encapsulation stack, ports, Purdue level |
+| 2 | **The data model** | The structure the protocol addresses — CIP's object model, Modbus's four data banks — and how R/W access maps onto physical process |
+| 3 | **The wire format** | The frame you actually have to decode, field by field, worked through a real example |
 | 4 | **Service / function codes** | The full table, colour-coded by *what it does to the physical process*, not by what the spec calls it |
-| 5 | **High-value objects** | What an attacker goes looking for, and why |
-| 6 | **Attacker playbook** | discover → enumerate → establish → manipulate → disrupt → persist, mapped to the ICS Kill Chain |
+| 5 | **The high-value targets** | What an attacker goes looking for and why — CIP's high-value objects, Modbus's FC 8 diagnostics and exception codes |
+| 6 | **Attacker playbook** | discover → enumerate → establish → manipulate → disrupt → cover tracks, mapped to the ICS Kill Chain |
 | 7 | **Defender playbook** | Copy-pasteable BPF, Zeek, Suricata and Wireshark syntax, plus the triage logic behind them |
 | 8 | **Normal vs suspicious** | The baseline — so the sheet works for someone who has never seen the protocol |
 | 9–10 | **Hardening + ATT&CK for ICS** | Concrete controls and technique IDs |
-| ⚠️ | **Traps** | The specific ways analysts get this protocol wrong, called out in their own panel |
+| ⚠️ | **Traps** | The specific ways analysts get this protocol wrong, called out in their own panel — CIP's class-scoped service codes and false-zero rule, Modbus's 4xxxx addressing trap and RTU-over-TCP frames that carry no MBAP header |
 
 ## Formats
 
@@ -67,8 +75,12 @@ one panel at a time.
 
 Values are checked against primary sources: protocol dissector source code, the published
 specification or vendor developers' guide, and vendor programming manuals. Sources are named
-in the footer of every sheet. Where a technique has been seen in the wild, the malware family,
-activity group or advisory is cited by name.
+in the footer of every sheet — the Wireshark ENIP/CIP dissectors, the ODVA developers guide
+and Rockwell's Logix 5000 Data Access manual for CIP; the Wireshark Modbus dissector
+(`packet-mbtcp.c`) and the Modbus Organization Application Protocol Specification v1.1b3 for
+Modbus. Where a technique has been seen in the wild, the malware family, activity group or
+advisory is cited by name — FrostyGoop / BUSTLEBERM against ENCO controllers at
+Lvivteploenergo, January 2024, is on the Modbus sheet for exactly that reason.
 
 Spotted something wrong? **Open an issue with the source to check against, or send a PR.**
 Corrections to hex values, service semantics and detection syntax are especially welcome —
@@ -78,7 +90,8 @@ so are requests for the next protocol.
 
 Lab and reference material. Exercise the offensive content only against equipment you are
 authorised to test. OT protocol writes move physical process — a stop command on a production
-controller is an outage, not a finding.
+controller is an outage, and a Modbus coil write is a physical output changing state, not a
+finding.
 
 ## Licence
 
