@@ -8,12 +8,12 @@ standing in a plant with no second monitor and no internet.
 
 <p align="center">
   <a href="./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pdf">
-    <img src="./CIP/CIP_EtherNetIP_Attack_Defend_Poster.png" width="400"
+    <img src="./assets/CIP_EtherNetIP_Attack_Defend_Poster_thumb.jpg" width="400"
          alt="CIP / EtherNet/IP Attack &amp; Defend one-pager">
   </a>
   &nbsp;&nbsp;
-  <a href="./ModBus/Modbus_Attack_Defend_Poster.pdf">
-    <img src="./ModBus/Modbus_Attack_Defend_Poster.png" width="400"
+  <a href="./Modbus/Modbus_Attack_Defend_Poster.pdf">
+    <img src="./assets/Modbus_Attack_Defend_Poster_thumb.jpg" width="400"
          alt="Modbus Attack &amp; Defend one-pager">
   </a>
   <br>
@@ -25,7 +25,7 @@ standing in a plant with no second monitor and no internet.
 | Sheet | Protocol | The one idea | Formats | Status |
 |---|---|---|---|---|
 | [**CIP**](./CIP/) | CIP / EtherNet/IP (ODVA) — service codes, object model, attack & defend | Every request is a `<SERVICE>` called on a `<CLASS>:<INSTANCE>:<ATTRIBUTE>` | [PDF](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pdf) · [PNG](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.png) · [PPTX](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pptx) | v1.0 |
-| [**Modbus**](./ModBus/) | Modbus TCP / RTU / ASCII (Modicon, 1979) — four data banks, function codes, attack & defend | Four data banks and one byte of intent — no users, no passwords, no sessions | [PDF](./ModBus/Modbus_Attack_Defend_Poster.pdf) · [PNG](./ModBus/Modbus_Attack_Defend_Poster.png) · [PPTX](./ModBus/Modbus_Attack_Defend_Poster.pptx) | v1.0 |
+| [**Modbus**](./Modbus/) | Modbus TCP / RTU / ASCII (Modicon, 1979) — four data banks, function codes, attack & defend | Four data banks and one byte of intent — no users, no passwords, no sessions | [PDF](./Modbus/Modbus_Attack_Defend_Poster.pdf) · [PNG](./Modbus/Modbus_Attack_Defend_Poster.png) · [PPTX](./Modbus/Modbus_Attack_Defend_Poster.pptx) | v1.0 |
 
 More protocols land the same way. The layout is deliberately repeatable — read one sheet and
 you know where to look on every sheet after it.
