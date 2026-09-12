@@ -1,0 +1,19 @@
+# This repo is checked out on both Windows and Linux. Normalise every text
+# file to LF in the repository *and* in the working tree, so `core.autocrlf`
+# on a Windows clone cannot introduce CRLF churn.
+* text=auto eol=lf
+
+# Deliverables are binary. Mark them explicitly so git never attempts a text
+# diff or a line-merge on them — a merged .pptx or .pdf is a corrupt file.
+# These overrides must come after the `*` rule above.
+*.pptx binary
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+
+# Keep the poster sources/renders out of GitHub's language stats and collapse
+# them in PR diffs, where a binary blob is noise rather than review material.
+*.pptx linguist-vendored
+*.pdf  linguist-vendored
+*.png  linguist-vendored
+*.jpg  linguist-vendored
