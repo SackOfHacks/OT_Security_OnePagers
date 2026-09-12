@@ -95,5 +95,12 @@ finding.
 
 ## Licence
 
-No licence file is set yet. Until one lands, treat these as all rights reserved: use them and
-print them freely, and please ask before redistributing modified versions.
+[**CC BY 4.0**](./LICENSE) — Creative Commons Attribution 4.0 International.
+
+Print them, hand them out, put them in a deck, fork the `.pptx` and build the next protocol
+sheet. Commercial use included: take one into a client engagement or a paid training room.
+The only condition is credit:
+
+> OT Security One-Pagers — https://github.com/SackOfHacks/OT_Security_OnePagers — CC BY 4.0
+
+If you extend a sheet or restyle it, say what you changed.
