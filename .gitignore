@@ -18,3 +18,9 @@ desktop.ini
 .vscode/
 .idea/
 *.swp
+
+# Machine-local Claude Code settings — holds absolute paths from whichever
+# workstation the repo is checked out on, so it must never be committed.
+# Keep this here as well as in any personal global ignore: a fresh clone on
+# another machine has only the repo's own rules to go on.
+.claude/settings.local.json
