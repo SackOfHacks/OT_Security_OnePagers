@@ -8,6 +8,8 @@ Three assertions, all mechanical:
      cannot be added and then left off the page
   3. every protocol directory carries the full pdf/png/pptx set plus a
      thumbnail in assets/
+  4. the sheet-count badge matches the number of protocol directories, so
+     the headline number cannot quietly go stale when a sheet is added
 
 Run directly, or via tools/run_tests.py.
 Exit 0 = all pass, 1 = at least one failure.
@@ -85,7 +87,23 @@ def main():
         else:
             print(f"    ok    {d.name}")
 
-    total = len(broken) + len(unreferenced) + len(incomplete)
+    print("\n[4] sheet-count badge matches the repo")
+    badge_wrong = []
+    actual = len(protocol_dirs())
+    m = re.search(r"img\.shields\.io/badge/sheets-(\d+)-", readme)
+    if m is None:
+        badge_wrong.append("no sheets badge found in README.md")
+    elif int(m.group(1)) != actual:
+        badge_wrong.append(
+            f"badge says {m.group(1)} sheet(s), repo has {actual} "
+            f"({', '.join(d.name for d in protocol_dirs())})"
+        )
+    for msg in badge_wrong:
+        print(f"    FAIL  {msg}")
+    if not badge_wrong:
+        print(f"    ok    badge and repo both say {actual}")
+
+    total = len(broken) + len(unreferenced) + len(incomplete) + len(badge_wrong)
     print(f"\n{'PASS' if total == 0 else f'FAIL: {total} violation(s)'}")
     return 1 if total else 0
 

@@ -2,6 +2,20 @@
 
 **One protocol. One sheet. Everything you need to attack it, defend it, and not get fooled by it.**
 
+<p align="center">
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/licence-CC%20BY%204.0-blue.svg" alt="Licence: CC BY 4.0"></a>
+  <img src="https://img.shields.io/badge/sheets-3-brightgreen.svg" alt="3 sheets published">
+  <img src="https://img.shields.io/badge/print-18%20%C3%97%2024%20in%20%40%20300%20dpi-orange.svg" alt="Print size 18 by 24 inches at 300 dpi">
+  <img src="https://img.shields.io/badge/source-editable%20.pptx-lightgrey.svg" alt="Editable PPTX source included">
+  <img src="https://img.shields.io/badge/commercial%20use-permitted-success.svg" alt="Commercial use permitted">
+</p>
+
+> [!NOTE]
+> **New — DNP3, September 2026.** The SCADA protocol under the North American grid. The object
+> library, the three-sublayer frame, the eleven-byte CROB where one byte decides whether a
+> breaker trips or closes, and the IIN bits that tell you an outstation already restarted
+> without anybody asking it to. **[Read the sheet →](./DNP3/)**
+
 Print-ready single-sheet references for OT/ICS protocols and the tradecraft around them —
 built for the analyst mid-hunt, the responder with a packet capture open, and the assessor
 standing in a plant with no second monitor and no internet.
@@ -35,6 +49,23 @@ standing in a plant with no second monitor and no internet.
 
 More protocols land the same way. The layout is deliberately repeatable — read one sheet and
 you know where to look on every sheet after it.
+
+## Why these and not another cheat sheet
+
+- **Attack and defend on one page.** The function-code table is colour-coded by what each code
+  does to the *physical process*, not by what the spec calls it — and the syntax for catching
+  it is two panels away.
+- **Copy-pasteable, not descriptive.** BPF, Zeek, Suricata and Wireshark filters that lift
+  straight off the sheet into a terminal or a rule file.
+- **Primary sources, cited on the sheet.** Dissector source code, the published specification,
+  vendor programming manuals — named in the footer so you can check the work rather than take
+  it on faith.
+- **The traps get their own panel.** The specific ways analysts misread each protocol, called
+  out explicitly, because a confident wrong reading is worse than no reading.
+- **Editable `.pptx`, not a flattened PDF.** Fork it, restyle it to your house colours, extend
+  it, or use it as the skeleton for the next protocol.
+- **CC BY 4.0, commercial use included.** Take one into a client engagement or a paid training
+  room. The only condition is credit.
 
 ## What's on a sheet
 
@@ -96,6 +127,27 @@ Spotted something wrong? **Open an issue with the source to check against, or se
 Corrections to hex values, service semantics and detection syntax are especially welcome —
 so are requests for the next protocol.
 
+## Release log
+
+| Date | What landed |
+|---|---|
+| 2026-09-21 | **DNP3 v1.0** — object library, three-sublayer frame anatomy, the CROB and the IIN, Select-Before-Operate and the two function codes that skip it |
+| 2026-09-21 | Repo checks (`tools/run_tests.py`) and a strict-allowlist `.gitignore` |
+| 2026-09-12 | CC BY 4.0 licence — commercial use permitted with credit |
+| 2026-09-03 | **Modbus v1.0** — four data banks, function codes, FC 8 diagnostics, the 4xxxx addressing trap |
+| 2026-08-15 | **CIP / EtherNet/IP v1.0** — service codes, object model, connection chain |
+
+## Next up
+
+Candidates for the next sheet, in no fixed order:
+
+**IEC 61850** (MMS + GOOSE) · **IEC 60870-5-104** · **S7comm / S7comm-Plus** · **PROFINET** ·
+**OPC UA** · **BACnet**
+
+Open an issue to push one up the list, or to nominate something not here — requests are the
+main thing that decides what gets drawn next. If a sheet saved you an hour, a ⭐ is the other
+signal that reaches me.
+
 ## Repo checks
 
 ```
@@ -104,16 +156,16 @@ py -3 tools\run_tests.py        # Windows
 ```
 
 Stdlib only — nothing to install. It checks that every README link resolves, that no
-deliverable has been added without being listed on the page, that each protocol directory
-carries the full PDF/PNG/PPTX set plus a thumbnail, and that `.gitignore` still holds its
-strict-allowlist policy. The third check runs that last audit against a deliberately broken
-`.gitignore` and requires it to fail, so the suite cannot go green while silently checking
-nothing.
+deliverable has been added without being listed on the page, that the sheet-count badge still
+matches reality, that each protocol directory carries the full PDF/PNG/PPTX set plus a
+thumbnail, and that `.gitignore` still holds its strict-allowlist policy. A third check runs
+that last audit against a deliberately broken `.gitignore` and requires it to fail, so the
+suite cannot go green while silently checking nothing.
 
 **Adding a sheet** — drop `<PROTOCOL>/<Name>_Attack_Defend_Poster.{pdf,png,pptx}` in a new
 directory, render an 800 px-wide thumbnail to `assets/<Name>_Attack_Defend_Poster_thumb.jpg`,
-add the row to the table above and the image to the strip at the top. Run the checks; they
-will name anything you missed.
+add the row to the table above, the image to the strip at the top, and bump the sheet-count
+badge. Run the checks; they will name anything you missed.
 
 ## ⚠️ Use responsibly
 
