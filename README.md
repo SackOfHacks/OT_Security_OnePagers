@@ -148,24 +148,14 @@ Open an issue to push one up the list, or to nominate something not here — req
 main thing that decides what gets drawn next. If a sheet saved you an hour, a ⭐ is the other
 signal that reaches me.
 
-## Repo checks
+## Adding a sheet
 
-```
-python3 tools/run_tests.py      # Linux
-py -3 tools\run_tests.py        # Windows
-```
+Drop `<PROTOCOL>/<Name>_Attack_Defend_Poster.{pdf,png,pptx}` into a new directory, render an
+800 px-wide thumbnail to `assets/<Name>_Attack_Defend_Poster_thumb.jpg`, then add the row to
+the sheet table, the image to the strip at the top, and bump the sheet-count badge.
 
-Stdlib only — nothing to install. It checks that every README link resolves, that no
-deliverable has been added without being listed on the page, that the sheet-count badge still
-matches reality, that each protocol directory carries the full PDF/PNG/PPTX set plus a
-thumbnail, and that `.gitignore` still holds its strict-allowlist policy. A third check runs
-that last audit against a deliberately broken `.gitignore` and requires it to fail, so the
-suite cannot go green while silently checking nothing.
-
-**Adding a sheet** — drop `<PROTOCOL>/<Name>_Attack_Defend_Poster.{pdf,png,pptx}` in a new
-directory, render an 800 px-wide thumbnail to `assets/<Name>_Attack_Defend_Poster_thumb.jpg`,
-add the row to the table above, the image to the strip at the top, and bump the sheet-count
-badge. Run the checks; they will name anything you missed.
+Keep the ten-panel order. The point of the layout is that someone who has read one sheet
+already knows where to look on the next one.
 
 ## ⚠️ Use responsibly
 

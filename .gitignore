@@ -40,9 +40,14 @@
 # 5 ── README thumbnails.
 !/assets/*.jpg
 
-# 6 ── Repo checks (tools/run_tests.py and the scripts it drives).
-#      Python only — no data files, no notebooks, no scratch output.
-!/tools/*.py
+# 6 ── Local-only. tools/ holds the maintenance checks (link/badge/coverage
+#      audit and the .gitignore policy audit). They are deliberately not
+#      published: this repo's audience downloads PDFs, and publishing ~13 KB
+#      of Python would also make Python the largest language GitHub counts
+#      here, labelling a poster repo as a Python project. Rule 1 already
+#      ignores them; this states the intent and blocks rule 4 from admitting
+#      a stray tools/*.pdf.
+/tools/
 
 # 7 ── Re-ignore the traps that rule 4 would otherwise let back in.
 #      Office and LibreOffice write lock and owner files directly beside
