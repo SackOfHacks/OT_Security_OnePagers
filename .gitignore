@@ -1,26 +1,61 @@
-# Office lock/owner files — created in-place whenever a .pptx source is opened
-~$*.pptx
-~$*.docx
-~$*.xlsx
+# ─────────────────────────────────────────────────────────────────────────
+# STRICT ALLOWLIST
+#
+# Everything is ignored by default; the repo's known-good file types are
+# then re-included by exception. A file type nobody has thought about is
+# NOT committable until a rule below explicitly admits it.
+#
+# This is deliberately the inverse of the usual denylist. A denylist only
+# blocks what it already enumerated, so the first secret, scratch file or
+# database that nobody predicted lands in a commit. Under an allowlist the
+# default answer is no, and being wrong costs a rejected `git add` instead
+# of a rewritten history.
+#
+# Rules are evaluated in order and the LAST match wins — so the
+# re-ignore block at the bottom must stay at the bottom.
+# ─────────────────────────────────────────────────────────────────────────
+
+# 1 ── Ignore everything.
+*
+
+# 2 ── Re-include directories, so git descends into them. Without this git
+#      prunes every directory at step 1 and none of the rules below can
+#      ever match. This admits no files by itself.
+!*/
+
+# 3 ── Repo metadata and documentation (repository root only).
+!/README.md
+!/LICENSE
+!/.gitignore
+!/.gitattributes
+
+# 4 ── Poster deliverables, exactly one protocol directory deep
+#      (CIP/, Modbus/, DNP3/, and whatever protocol lands next).
+#      Nothing nested deeper is admitted, so a stray build/ or
+#      node_modules/ tree cannot smuggle a .png back in.
+!/*/*.pdf
+!/*/*.png
+!/*/*.pptx
+
+# 5 ── README thumbnails.
+!/assets/*.jpg
+
+# 6 ── Re-ignore the traps that rule 4 would otherwise let back in.
+#      Office and LibreOffice write lock and owner files directly beside
+#      the source they have open, and "~$Poster.pptx" matches "*.pptx".
+#      Keep this block last — the final matching rule is the one that wins.
+~$*
+.~lock.*#
+*.~ppt*
 *.tmp
 
-# PowerPoint/LibreOffice recovery + backup artefacts
-*.~ppt*
-.~lock.*#
-
-# OS cruft
-.DS_Store
-._*
-Thumbs.db
-desktop.ini
-
-# Editor
-.vscode/
-.idea/
-*.swp
-
-# Machine-local Claude Code settings — holds absolute paths from whichever
-# workstation the repo is checked out on, so it must never be committed.
-# Keep this here as well as in any personal global ignore: a fresh clone on
-# another machine has only the repo's own rules to go on.
-.claude/settings.local.json
+# ─────────────────────────────────────────────────────────────────────────
+# Note: OS cruft (.DS_Store, Thumbs.db, desktop.ini), editor state
+# (.vscode/, .idea/, *.swp) and machine-local agent settings
+# (.claude/settings.local.json) no longer need their own rules — rule 1
+# already covers them, and every other file type besides.
+#
+# To tighten further, replace the rule-4 globs with one explicit pair of
+# lines per protocol directory. That blocks a stray top-level directory
+# too, at the cost of editing this file each time a sheet is added.
+# ─────────────────────────────────────────────────────────────────────────
