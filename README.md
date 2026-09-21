@@ -96,6 +96,25 @@ Spotted something wrong? **Open an issue with the source to check against, or se
 Corrections to hex values, service semantics and detection syntax are especially welcome —
 so are requests for the next protocol.
 
+## Repo checks
+
+```
+python3 tools/run_tests.py      # Linux
+py -3 tools\run_tests.py        # Windows
+```
+
+Stdlib only — nothing to install. It checks that every README link resolves, that no
+deliverable has been added without being listed on the page, that each protocol directory
+carries the full PDF/PNG/PPTX set plus a thumbnail, and that `.gitignore` still holds its
+strict-allowlist policy. The third check runs that last audit against a deliberately broken
+`.gitignore` and requires it to fail, so the suite cannot go green while silently checking
+nothing.
+
+**Adding a sheet** — drop `<PROTOCOL>/<Name>_Attack_Defend_Poster.{pdf,png,pptx}` in a new
+directory, render an 800 px-wide thumbnail to `assets/<Name>_Attack_Defend_Poster_thumb.jpg`,
+add the row to the table above and the image to the strip at the top. Run the checks; they
+will name anything you missed.
+
 ## ⚠️ Use responsibly
 
 Lab and reference material. Exercise the offensive content only against equipment you are
