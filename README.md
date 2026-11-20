@@ -17,12 +17,12 @@
 
 You have a packet capture open, a protocol you half-remember, and no time to read a
 four-hundred-page specification. **Each sheet is the one page you need: what the protocol is,
-what every function code does to the physical process, how an attacker uses it, and the exact
-filter that catches them.**
+what every command does to the equipment it controls, how an attacker would use it, and the
+exact filter that catches them.**
 
-Nineteen industrial protocols — the grid, the PLC families, field instruments and safety
-systems, building automation and smart meters — on the same ten-panel layout. Learn where to
-look on one sheet and you know where to look on all of them.
+Nineteen industrial protocols, covering the power grid, factory controllers (PLCs), field
+instruments, safety systems, building automation and smart meters. Every sheet uses the same
+layout, so once you've read one you know where to find things on all the others.
 
 > [!TIP]
 > **New — November 2026: sixteen sheets in one drop**, from IEC-104 and IEC 61850 to TriStation,
@@ -30,18 +30,22 @@ look on one sheet and you know where to look on all of them.
 
 ## Why people keep them open
 
-- 🎯 **The one idea up front.** Every sheet opens with the single sentence that makes the
-  protocol decode itself — *"Select and Execute are the same message, one bit apart."*
-- 🔴 **Colour-coded by physical consequence.** Function codes are coloured by what they do to the
-  plant (read, enumerate, set a value, operate a breaker, stop a CPU), not by what the
-  specification calls them.
-- 🟢 **Detection you can paste.** BPF, Zeek, Suricata and Wireshark syntax that lifts straight
-  into a terminal or a rule file, plus the one highest-value query for that protocol.
-- ⚠️ **The traps get their own callout.** The point index that names no breaker, the second
-  identity your firewall never sees, the parser that silently is not installed.
-- 📚 **Checked, not paraphrased.** Every Wireshark filter was tested against a real Wireshark
-  build; every value is traced to a specification, dissector or vendor manual, named on the
-  sheet.
+- 🎯 **The key point first.** A banner across the top of each sheet sums up, in one sentence,
+  the thing that matters most about that protocol, usually where its security falls apart. For
+  Modbus: anyone who can reach the device can read and write it, because there are no users or
+  passwords.
+- 🔴 **Commands colour-coded by what they do to the plant.** Every command in the protocol is
+  listed, and coloured by its real-world effect: grey only reads data, blue maps the system,
+  orange changes a setting, and red operates equipment or stops a controller.
+- 🟢 **Detection you can copy and paste.** Ready-to-use filters and rules for the common tools
+  (tcpdump, Zeek, Suricata, Wireshark), plus the single most useful search to run for that
+  protocol.
+- ⚠️ **Common mistakes called out.** Each sheet has a warning box listing the ways analysts
+  usually misread that protocol. One example: a device number in a capture doesn't tell you
+  which physical breaker it controls.
+- 📚 **Checked against the sources.** Every Wireshark filter was tested against a real Wireshark
+  install, and every value is traced to the specification or the vendor's manual, which the
+  sheet names.
 - ✏️ **Editable and free to use.** The `.pptx` source is included, and the licence is CC BY 4.0,
   commercial use permitted.
 
@@ -49,7 +53,7 @@ look on one sheet and you know where to look on all of them.
 
 ### 🔌 By what you see on the wire
 
-Port or EtherType in a capture, firewall log or Shodan result → the sheet that decodes it.
+Look up the port number (or, for traffic without an IP address, the EtherType) from your capture, firewall log or Shodan search.
 
 | You see | It is probably | Sheet |
 |---|---|---|
@@ -75,8 +79,8 @@ Port or EtherType in a capture, firewall log or Shodan result → the sheet that
 | `1153/tcp` or `/udp` | ANSI C12.22 smart meters | [ANSI C12.22](./C12.22/) |
 | `4059/tcp` or `/udp` | DLMS/COSEM smart meters | [DLMS/COSEM](./DLMS/) |
 
-Ports are conventions, not guarantees: gateways, serial converters and vendors move them. Each
-sheet's panel 1 lists the variants, and its traps callout says what a non-standard port means.
+These are the usual ports, not guaranteed ones: gateways, serial converters and some vendors use
+others. Panel 1 of each sheet lists the alternatives.
 
 ### 🏭 By vendor or kit on site
 
@@ -103,29 +107,30 @@ When an advisory names a family, this is the sheet that shows what it did on the
 | Named in the advisory | What it used | Sheet |
 |---|---|---|
 | **Industroyer** (Kyiv, 2016) | IEC-104 module, IEC 61850 MMS module | [IEC-104](./IEC104/) · [61850 MMS](./IEC61850-MMS/) |
-| **Industroyer2** (Ukraine, April 2022) | IEC-104 only, target IOAs compiled in | [IEC-104](./IEC104/) |
+| **Industroyer2** (Ukraine, April 2022) | IEC-104 only, with the target substation's point addresses built into the malware | [IEC-104](./IEC104/) |
 | **CosmicEnergy** (2023) | IEC-104 | [IEC-104](./IEC104/) |
 | **TRITON / TRISIS** (2017) | TriStation, against a Triconex safety controller | [TriStation](./TriStation/) |
 | **Stuxnet** (Natanz, 2010) | S7comm via a trojanised STEP 7 library | [S7comm](./S7comm/) |
 | **FrostyGoop / BUSTLEBERM** (Lviv, January 2024) | Modbus TCP against heating controllers | [Modbus](./Modbus/) |
-| **PIPEDREAM / INCONTROLLER** (2022) | Omron module over FINS, an OPC UA module, CODESYS reach | [FINS](./FINS/) · [OPC UA](./OPCUA/) · [ADS / AMS](./ADS/) |
+| **PIPEDREAM / INCONTROLLER** (2022) | A module for Omron PLCs over FINS, an OPC UA module, and tooling for CODESYS-based controllers (which include Beckhoff's) | [FINS](./FINS/) · [OPC UA](./OPCUA/) · [ADS / AMS](./ADS/) |
 | **2021 German building-automation lockout** (CVE-2023-4346) | KNX device keys set by an intruder | [KNXnet/IP](./KNX/) |
 
 ### 🧭 By the job in front of you
 
 - **"I've been handed a PCAP."** Match ports and EtherTypes with the [wire table](#-by-what-you-see-on-the-wire),
-  then go straight to panel 7 on that sheet: capture filter, parser, and the triage questions in
-  order.
+  then go straight to panel 7 on that sheet. It gives the capture filter, the tool that can
+  read the protocol, and a short list of questions to work through in order.
 - **"I'm hunting in a substation."** [DNP3](./DNP3/) or [IEC-104](./IEC104/) for the SCADA link,
   [61850 MMS](./IEC61850-MMS/) for the station bus, [GOOSE & SV](./IEC61850-GOOSE/) for the process
   bus, [C37.118](./C37.118/) for wide-area monitoring.
-- **"Is this command normal?"** Panel 8 (normal vs suspicious) on each sheet is the baseline,
-  written for someone who has never seen the protocol before.
-- **"I need detection content."** Panel 7 has paste-ready BPF, Zeek, Suricata and Wireshark syntax,
-  and says plainly where a Zeek parser or Wireshark dissector does not exist, because a missing
-  parser looks exactly like a quiet network.
-- **"I'm writing the assessment report."** Panel 9 gives hardening controls and panel 10 the
-  ATT&CK for ICS technique IDs, with the in-the-wild citation.
+- **"Is this command normal?"** Panel 8 on each sheet describes what everyday traffic looks
+  like and what should make you look twice, written for someone new to the protocol.
+- **"I need detection content."** Panel 7 has ready-to-paste tcpdump, Zeek, Suricata and Wireshark
+  syntax. It also says when Zeek or Wireshark cannot read the protocol at all. That matters
+  because a tool that can't read the protocol shows no alerts, which looks the same as a network
+  with nothing going on.
+- **"I'm writing the assessment report."** Panel 9 lists hardening steps, and panel 10 gives the
+  ATT&CK for ICS technique IDs plus any real-world attack that used the protocol.
 - **"I'm teaching an IT analyst OT."** Start with [Modbus](./Modbus/) (simplest), then [DNP3](./DNP3/)
   and [IEC-104](./IEC104/) as a matched pair. Practise against real captures in
   [ICS-PCAP-Challenges](https://github.com/SackOfHacks/ICS-PCAP-Challenges), which covers every
@@ -136,31 +141,31 @@ When an advisory names a family, this is the sheet that shows what it did on the
 Every sheet ships as an editable **PPTX**, a vector **PDF** for print and a 300 dpi **PNG** for
 screens. **Preview** opens a quick 800 px look before you download.
 
-| Sheet | Domain | The one idea | Get it |
+| Sheet | Domain | The key point in one sentence | Get it |
 |---|---|---|---|
-| [**DNP3**](./DNP3/) | Grid | Select arms the point, Operate fires it — and neither message asks who you are | [PDF](./DNP3/DNP3_Attack_Defend_Poster.pdf) · [PNG](./DNP3/DNP3_Attack_Defend_Poster.png) · [PPTX](./DNP3/DNP3_Attack_Defend_Poster.pptx) · [preview](./assets/DNP3_Attack_Defend_Poster_thumb.jpg) |
-| [**IEC-104**](./IEC104/) | Grid | Select and Execute are the same message, one bit apart | [PDF](./IEC104/IEC104_Attack_Defend_Poster.pdf) · [PNG](./IEC104/IEC104_Attack_Defend_Poster.png) · [PPTX](./IEC104/IEC104_Attack_Defend_Poster.pptx) · [preview](./assets/IEC104_Attack_Defend_Poster_thumb.jpg) |
-| [**61850 MMS**](./IEC61850-MMS/) | Grid | Control is not a protocol verb — it is a Write to a named object | [PDF](./IEC61850-MMS/IEC61850_MMS_Attack_Defend_Poster.pdf) · [PNG](./IEC61850-MMS/IEC61850_MMS_Attack_Defend_Poster.png) · [PPTX](./IEC61850-MMS/IEC61850_MMS_Attack_Defend_Poster.pptx) · [preview](./assets/IEC61850_MMS_Attack_Defend_Poster_thumb.jpg) |
-| [**GOOSE & SV**](./IEC61850-GOOSE/) | Grid | The subscriber obeys the highest state number it has seen | [PDF](./IEC61850-GOOSE/IEC61850_GOOSE_SV_Attack_Defend_Poster.pdf) · [PNG](./IEC61850-GOOSE/IEC61850_GOOSE_SV_Attack_Defend_Poster.png) · [PPTX](./IEC61850-GOOSE/IEC61850_GOOSE_SV_Attack_Defend_Poster.pptx) · [preview](./assets/IEC61850_GOOSE_SV_Attack_Defend_Poster_thumb.jpg) |
-| [**C37.118**](./C37.118/) | Grid | A data frame is just numbers until CFG-2 names them — and CFG-2 is handed to anyone who asks | [PDF](./C37.118/C37118_Synchrophasor_Attack_Defend_Poster.pdf) · [PNG](./C37.118/C37118_Synchrophasor_Attack_Defend_Poster.png) · [PPTX](./C37.118/C37118_Synchrophasor_Attack_Defend_Poster.pptx) · [preview](./assets/C37118_Synchrophasor_Attack_Defend_Poster_thumb.jpg) |
-| [**CIP**](./CIP/) | PLC | Every request is a `<SERVICE>` on a `<CLASS>:<INSTANCE>:<ATTRIBUTE>` | [PDF](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pdf) · [PNG](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.png) · [PPTX](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pptx) · [preview](./assets/CIP_EtherNetIP_Attack_Defend_Poster_thumb.jpg) |
-| [**Modbus**](./Modbus/) | PLC | Four data banks and one byte of intent — no users, no passwords, no sessions | [PDF](./Modbus/Modbus_Attack_Defend_Poster.pdf) · [PNG](./Modbus/Modbus_Attack_Defend_Poster.png) · [PPTX](./Modbus/Modbus_Attack_Defend_Poster.pptx) · [preview](./assets/Modbus_Attack_Defend_Poster_thumb.jpg) |
-| [**S7comm**](./S7comm/) | PLC | The function byte is the whole exploit — `0x29` halts the CPU | [PDF](./S7comm/S7comm_Attack_Defend_Poster.pdf) · [PNG](./S7comm/S7comm_Attack_Defend_Poster.png) · [PPTX](./S7comm/S7comm_Attack_Defend_Poster.pptx) · [preview](./assets/S7comm_Attack_Defend_Poster_thumb.jpg) |
-| [**FINS**](./FINS/) | PLC | Two bytes at a fixed offset — `04 02` stops the PLC, no password asked | [PDF](./FINS/Omron_FINS_Attack_Defend_Poster.pdf) · [PNG](./FINS/Omron_FINS_Attack_Defend_Poster.png) · [PPTX](./FINS/Omron_FINS_Attack_Defend_Poster.pptx) · [preview](./assets/Omron_FINS_Attack_Defend_Poster_thumb.jpg) |
-| [**ADS / AMS**](./ADS/) | PLC | The route is the whole authentication | [PDF](./ADS/Beckhoff_ADS_Attack_Defend_Poster.pdf) · [PNG](./ADS/Beckhoff_ADS_Attack_Defend_Poster.png) · [PPTX](./ADS/Beckhoff_ADS_Attack_Defend_Poster.pptx) · [preview](./assets/Beckhoff_ADS_Attack_Defend_Poster_thumb.jpg) |
-| [**PROFINET**](./PROFINET/) | PLC | The station name is the address — and it is a writable field | [PDF](./PROFINET/PROFINET_Attack_Defend_Poster.pdf) · [PNG](./PROFINET/PROFINET_Attack_Defend_Poster.png) · [PPTX](./PROFINET/PROFINET_Attack_Defend_Poster.pptx) · [preview](./assets/PROFINET_Attack_Defend_Poster_thumb.jpg) |
-| [**OPC UA**](./OPCUA/) | PLC / integration | "Encrypted" is not "authenticated" — two independent switches, both commonly off | [PDF](./OPCUA/OPC_UA_Attack_Defend_Poster.pdf) · [PNG](./OPCUA/OPC_UA_Attack_Defend_Poster.png) · [PPTX](./OPCUA/OPC_UA_Attack_Defend_Poster.pptx) · [preview](./assets/OPC_UA_Attack_Defend_Poster_thumb.jpg) |
-| [**HART-IP**](./HART-IP/) | Field | Command 40 freezes the 4-20 mA loop at a value the DCS believes | [PDF](./HART-IP/HART-IP_Attack_Defend_Poster.pdf) · [PNG](./HART-IP/HART-IP_Attack_Defend_Poster.png) · [PPTX](./HART-IP/HART-IP_Attack_Defend_Poster.pptx) · [preview](./assets/HART-IP_Attack_Defend_Poster_thumb.jpg) |
-| [**TriStation**](./TriStation/) | Safety | The keyswitch is the only authentication the protocol has | [PDF](./TriStation/TriStation_Attack_Defend_Poster.pdf) · [PNG](./TriStation/TriStation_Attack_Defend_Poster.png) · [PPTX](./TriStation/TriStation_Attack_Defend_Poster.pptx) · [preview](./assets/TriStation_Attack_Defend_Poster_thumb.jpg) |
-| [**ROC Plus**](./ROC-Plus/) | Oil & gas | Opcode 181 writes any parameter — including the flow constants custody transfer is billed on | [PDF](./ROC-Plus/ROC_Plus_Attack_Defend_Poster.pdf) · [PNG](./ROC-Plus/ROC_Plus_Attack_Defend_Poster.png) · [PPTX](./ROC-Plus/ROC_Plus_Attack_Defend_Poster.pptx) · [preview](./assets/ROC_Plus_Attack_Defend_Poster_thumb.jpg) |
-| [**BACnet**](./BACnet/) | Building | Every write carries a priority — 1 beats the operator's 8 | [PDF](./BACnet/BACnet_Attack_Defend_Poster.pdf) · [PNG](./BACnet/BACnet_Attack_Defend_Poster.png) · [PPTX](./BACnet/BACnet_Attack_Defend_Poster.pptx) · [preview](./assets/BACnet_Attack_Defend_Poster_thumb.jpg) |
-| [**KNXnet/IP**](./KNX/) | Building | A GroupValue_Write names a function, not a device — and carries no sender | [PDF](./KNX/KNXnetIP_Attack_Defend_Poster.pdf) · [PNG](./KNX/KNXnetIP_Attack_Defend_Poster.png) · [PPTX](./KNX/KNXnetIP_Attack_Defend_Poster.pptx) · [preview](./assets/KNXnetIP_Attack_Defend_Poster_thumb.jpg) |
-| [**ANSI C12.22**](./C12.22/) | Metering | A Write is a procedure call — and one procedure opens the service switch | [PDF](./C12.22/ANSI_C1222_Attack_Defend_Poster.pdf) · [PNG](./C12.22/ANSI_C1222_Attack_Defend_Poster.png) · [PPTX](./C12.22/ANSI_C1222_Attack_Defend_Poster.pptx) · [preview](./assets/ANSI_C1222_Attack_Defend_Poster_thumb.jpg) |
-| [**DLMS/COSEM**](./DLMS/) | Metering | Disconnecting a household is one ACTION — class 70, method 1 | [PDF](./DLMS/DLMS_COSEM_Attack_Defend_Poster.pdf) · [PNG](./DLMS/DLMS_COSEM_Attack_Defend_Poster.png) · [PPTX](./DLMS/DLMS_COSEM_Attack_Defend_Poster.pptx) · [preview](./assets/DLMS_COSEM_Attack_Defend_Poster_thumb.jpg) |
+| [**DNP3**](./DNP3/) | Grid | Breaker commands use a two-step "arm, then fire" exchange, and neither step checks who sent it | [PDF](./DNP3/DNP3_Attack_Defend_Poster.pdf) · [PNG](./DNP3/DNP3_Attack_Defend_Poster.png) · [PPTX](./DNP3/DNP3_Attack_Defend_Poster.pptx) · [preview](./assets/DNP3_Attack_Defend_Poster_thumb.jpg) |
+| [**IEC-104**](./IEC104/) | Grid | The "arm" and "fire" versions of a breaker command differ by one bit, and the device never checks who sent it | [PDF](./IEC104/IEC104_Attack_Defend_Poster.pdf) · [PNG](./IEC104/IEC104_Attack_Defend_Poster.png) · [PPTX](./IEC104/IEC104_Attack_Defend_Poster.pptx) · [preview](./assets/IEC104_Attack_Defend_Poster_thumb.jpg) |
+| [**61850 MMS**](./IEC61850-MMS/) | Grid | Tripping a breaker or changing a protection setting is just a "write" to a named data item | [PDF](./IEC61850-MMS/IEC61850_MMS_Attack_Defend_Poster.pdf) · [PNG](./IEC61850-MMS/IEC61850_MMS_Attack_Defend_Poster.png) · [PPTX](./IEC61850-MMS/IEC61850_MMS_Attack_Defend_Poster.pptx) · [preview](./assets/IEC61850_MMS_Attack_Defend_Poster_thumb.jpg) |
+| [**GOOSE & SV**](./IEC61850-GOOSE/) | Grid | Relays act on whichever message carries the highest sequence number, so a forged message with a higher number wins | [PDF](./IEC61850-GOOSE/IEC61850_GOOSE_SV_Attack_Defend_Poster.pdf) · [PNG](./IEC61850-GOOSE/IEC61850_GOOSE_SV_Attack_Defend_Poster.png) · [PPTX](./IEC61850-GOOSE/IEC61850_GOOSE_SV_Attack_Defend_Poster.pptx) · [preview](./assets/IEC61850_GOOSE_SV_Attack_Defend_Poster_thumb.jpg) |
+| [**C37.118**](./C37.118/) | Grid | The measurement data is unreadable without a separate configuration message, and the device sends that message to anyone who asks | [PDF](./C37.118/C37118_Synchrophasor_Attack_Defend_Poster.pdf) · [PNG](./C37.118/C37118_Synchrophasor_Attack_Defend_Poster.png) · [PPTX](./C37.118/C37118_Synchrophasor_Attack_Defend_Poster.pptx) · [preview](./assets/C37118_Synchrophasor_Attack_Defend_Poster_thumb.jpg) |
+| [**CIP**](./CIP/) | PLC | Every request names an action and the object it acts on, so the object path tells you what is being done | [PDF](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pdf) · [PNG](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.png) · [PPTX](./CIP/CIP_EtherNetIP_Attack_Defend_Poster.pptx) · [preview](./assets/CIP_EtherNetIP_Attack_Defend_Poster_thumb.jpg) |
+| [**Modbus**](./Modbus/) | PLC | There are no users, passwords or sessions: anyone who can reach the device can read and write its memory | [PDF](./Modbus/Modbus_Attack_Defend_Poster.pdf) · [PNG](./Modbus/Modbus_Attack_Defend_Poster.png) · [PPTX](./Modbus/Modbus_Attack_Defend_Poster.pptx) · [preview](./assets/Modbus_Attack_Defend_Poster_thumb.jpg) |
+| [**S7comm**](./S7comm/) | PLC | One byte selects the operation, one value of it (`0x29`) stops the PLC, and nothing checks who sent it | [PDF](./S7comm/S7comm_Attack_Defend_Poster.pdf) · [PNG](./S7comm/S7comm_Attack_Defend_Poster.png) · [PPTX](./S7comm/S7comm_Attack_Defend_Poster.pptx) · [preview](./assets/S7comm_Attack_Defend_Poster_thumb.jpg) |
+| [**FINS**](./FINS/) | PLC | The command is two bytes at a fixed position; `04 02` stops the PLC, and no password is asked | [PDF](./FINS/Omron_FINS_Attack_Defend_Poster.pdf) · [PNG](./FINS/Omron_FINS_Attack_Defend_Poster.png) · [PPTX](./FINS/Omron_FINS_Attack_Defend_Poster.pptx) · [preview](./assets/Omron_FINS_Attack_Defend_Poster_thumb.jpg) |
+| [**ADS / AMS**](./ADS/) | PLC | The only access control is a "route" entry on the controller, and it can be added remotely with the default password | [PDF](./ADS/Beckhoff_ADS_Attack_Defend_Poster.pdf) · [PNG](./ADS/Beckhoff_ADS_Attack_Defend_Poster.png) · [PPTX](./ADS/Beckhoff_ADS_Attack_Defend_Poster.pptx) · [preview](./assets/Beckhoff_ADS_Attack_Defend_Poster_thumb.jpg) |
+| [**PROFINET**](./PROFINET/) | PLC | Devices are identified by a name that anyone on the network can change, and renaming one knocks it offline | [PDF](./PROFINET/PROFINET_Attack_Defend_Poster.pdf) · [PNG](./PROFINET/PROFINET_Attack_Defend_Poster.png) · [PPTX](./PROFINET/PROFINET_Attack_Defend_Poster.pptx) · [preview](./assets/PROFINET_Attack_Defend_Poster_thumb.jpg) |
+| [**OPC UA**](./OPCUA/) | PLC / integration | Encryption and login are separate settings, so a connection can be encrypted yet anonymous, and the server tells you which if you ask | [PDF](./OPCUA/OPC_UA_Attack_Defend_Poster.pdf) · [PNG](./OPCUA/OPC_UA_Attack_Defend_Poster.png) · [PPTX](./OPCUA/OPC_UA_Attack_Defend_Poster.pptx) · [preview](./assets/OPC_UA_Attack_Defend_Poster_thumb.jpg) |
+| [**HART-IP**](./HART-IP/) | Field | Commands go straight to the field instrument, and one of them (Command 40) freezes its reading at a fake value the control system believes | [PDF](./HART-IP/HART-IP_Attack_Defend_Poster.pdf) · [PNG](./HART-IP/HART-IP_Attack_Defend_Poster.png) · [PPTX](./HART-IP/HART-IP_Attack_Defend_Poster.pptx) · [preview](./assets/HART-IP_Attack_Defend_Poster_thumb.jpg) |
+| [**TriStation**](./TriStation/) | Safety | The physical key switch on the safety controller is its only protection, because the network protocol checks nothing | [PDF](./TriStation/TriStation_Attack_Defend_Poster.pdf) · [PNG](./TriStation/TriStation_Attack_Defend_Poster.png) · [PPTX](./TriStation/TriStation_Attack_Defend_Poster.pptx) · [preview](./assets/TriStation_Attack_Defend_Poster_thumb.jpg) |
+| [**ROC Plus**](./ROC-Plus/) | Oil & gas | One command (opcode 181) can change any setting, including the flow values that billing is based on, and the login password travels unencrypted | [PDF](./ROC-Plus/ROC_Plus_Attack_Defend_Poster.pdf) · [PNG](./ROC-Plus/ROC_Plus_Attack_Defend_Poster.png) · [PPTX](./ROC-Plus/ROC_Plus_Attack_Defend_Poster.pptx) · [preview](./assets/ROC_Plus_Attack_Defend_Poster_thumb.jpg) |
+| [**BACnet**](./BACnet/) | Building | Every write carries a priority number, a lower number overrides the operator's setting, and the sender is never checked | [PDF](./BACnet/BACnet_Attack_Defend_Poster.pdf) · [PNG](./BACnet/BACnet_Attack_Defend_Poster.png) · [PPTX](./BACnet/BACnet_Attack_Defend_Poster.pptx) · [preview](./assets/BACnet_Attack_Defend_Poster_thumb.jpg) |
+| [**KNXnet/IP**](./KNX/) | Building | A command addresses a function ("floor 1 lights") rather than a device, carries no sender, and every device listening obeys it | [PDF](./KNX/KNXnetIP_Attack_Defend_Poster.pdf) · [PNG](./KNX/KNXnetIP_Attack_Defend_Poster.png) · [PPTX](./KNX/KNXnetIP_Attack_Defend_Poster.pptx) · [preview](./assets/KNXnetIP_Attack_Defend_Poster_thumb.jpg) |
+| [**ANSI C12.22**](./C12.22/) | Metering | Writing to one particular table makes the meter run a built-in routine, and one of those routines cuts the customer's power | [PDF](./C12.22/ANSI_C1222_Attack_Defend_Poster.pdf) · [PNG](./C12.22/ANSI_C1222_Attack_Defend_Poster.png) · [PPTX](./C12.22/ANSI_C1222_Attack_Defend_Poster.pptx) · [preview](./assets/ANSI_C1222_Attack_Defend_Poster_thumb.jpg) |
+| [**DLMS/COSEM**](./DLMS/) | Metering | Cutting power to a household takes one command to the meter's disconnect function | [PDF](./DLMS/DLMS_COSEM_Attack_Defend_Poster.pdf) · [PNG](./DLMS/DLMS_COSEM_Attack_Defend_Poster.png) · [PPTX](./DLMS/DLMS_COSEM_Attack_Defend_Poster.pptx) · [preview](./assets/DLMS_COSEM_Attack_Defend_Poster_thumb.jpg) |
 
-**Read them in pairs.** Four pairs cross-reference each other on purpose, so reading one makes
-the other decode on sight: **DNP3 ↔ IEC-104** (North American and European grid SCADA),
-**61850 MMS ↔ GOOSE & SV** (the two halves of one standard), **BACnet ↔ KNXnet/IP** (the two
+**Read them in pairs.** Four pairs of sheets cover similar protocols and point out where they
+match and where they differ, so once you know one the other is quick to learn:
+**DNP3 ↔ IEC-104** (grid control in North America and in Europe), **61850 MMS ↔ GOOSE & SV** (the two halves of one standard), **BACnet ↔ KNXnet/IP** (the two
 building buses) and **ANSI C12.22 ↔ DLMS/COSEM** (North American and European metering).
 
 ## What's on every sheet
@@ -169,24 +174,24 @@ Ten panels, always in the same place, always in the same order:
 
 | | Panel | | Panel |
 |---|---|---|---|
-| 🎯 | **The one idea** — the sentence that decodes the rest | 6 | **Attacker playbook** — discover → enumerate → manipulate → disrupt → cover tracks |
-| 1 | **Where it lives** — variants, stack, ports, Purdue level | 7 | **Defender playbook** — capture, parse, detect, triage, the one query |
-| 2 | **The data model** — what the protocol addresses, mapped to the process | 8 | **Normal vs suspicious** — the baseline |
-| 3 | **The wire format** — the frame, field by field | 9 | **Hardening** — concrete controls and the standards behind them |
-| 4 | **Function codes** — the full table, coloured by physical consequence | 10 | **ATT&CK for ICS** — technique IDs and what has been seen in the wild |
-| 5 | **The high-value targets** — the two details an attacker goes looking for | ⚠️ | **Traps** — the ways analysts get this protocol wrong |
+| 🎯 | **The key point** — what matters most, in one sentence | 6 | **Attacker playbook** — how an attack unfolds, step by step |
+| 1 | **Where it lives** — versions, ports, and where it sits in a plant network | 7 | **Defender playbook** — how to capture it, detect misuse and decide what matters |
+| 2 | **The data model** — how the protocol names the things it controls | 8 | **Normal vs suspicious** — what everyday traffic looks like, and what doesn't fit |
+| 3 | **The message layout** — a message taken apart byte by byte | 9 | **Hardening** — concrete controls and the standards behind them |
+| 4 | **Commands** — every one, coloured by its real-world effect | 10 | **ATT&CK for ICS** — the standard attack-technique IDs, and real attacks that used the protocol |
+| 5 | **What attackers go after** — the protocol's most dangerous features | ⚠️ | **Common mistakes** — how analysts usually misread this protocol |
 
 Laid out for **18 × 24 in at 300 dpi**: print one for the SOC wall or the control-room door. It
 also reads fine on a monitor at 100% zoom, one panel at a time.
 
 ## Accuracy
 
-Values are checked against primary sources: the published specification or vendor developers'
-guide, protocol dissector source, and vendor programming manuals. Every Wireshark display filter
-on a sheet was checked against the field list of Wireshark 4.6.10. Every Zeek reference says
-whether the parser is mainline, a CISA/INL ICSNPP package, or absent. Malware and incidents are
-named only where they genuinely used the protocol; where nothing has been seen in the wild, the
-sheet says so and cites the defining research instead.
+Every value is checked against the original sources: the published specification, the vendor's
+manuals, and the source code of the Wireshark decoder for that protocol. Every Wireshark filter on
+a sheet was tested against Wireshark 4.6.10. For Zeek, each sheet says whether support is built
+in, comes from a free CISA/INL add-on (ICSNPP), or doesn't exist. Malware and incidents are named
+only where they really used the protocol. Where no real-world attack is known, the sheet says so
+and points to the key published research instead.
 
 <details>
 <summary><b>Sources, sheet by sheet</b></summary>
@@ -211,27 +216,27 @@ sheet says so and cites the defining research instead.
 </details>
 
 Spotted something wrong? **Open an issue with the source to check against, or send a PR.**
-Corrections to hex values, service semantics and detection syntax are especially welcome.
+Corrections to values, command descriptions and detection rules are especially welcome.
 
 ## Not finding your protocol?
 
 The set was checked against all 28 OT protocols in
-[ICS-PCAP-Challenges](https://github.com/SackOfHacks/ICS-PCAP-Challenges). Several live as a
-panel on the sheet they belong with, rather than on a sheet of their own.
+[ICS-PCAP-Challenges](https://github.com/SackOfHacks/ICS-PCAP-Challenges). Some are covered
+inside a closely related sheet instead of getting their own, and a few were left out on purpose.
 
 <details>
 <summary><b>Where the other protocols went, and why</b></summary>
 
 | Protocol | Where it is | Why |
 |---|---|---|
-| S7comm-Plus | panel on **[S7comm](./S7comm/)** | same port, transport, discovery and defender syntax; the difference is one protocol-ID byte and the Rogue7 story |
-| IEC 61850 Sampled Values, R-GOOSE / R-SV | on **[GOOSE & SV](./IEC61850-GOOSE/)** | same publisher/subscriber model and the same replay-and-injection attack class; R-GOOSE is GOOSE made routable |
-| OPC DA (OPC Classic over DCOM) | panel on **[OPC UA](./OPCUA/)** | on the wire it is Windows DCE/RPC + DCOM, so the attack and defence story is Windows RPC, and OPC UA is its successor |
-| EtherCAT | panel on **[ADS / AMS](./ADS/)** | a machine-level Layer-2 bus that nobody taps and no NSM parser covers; ADS is the routable way in |
-| Niagara Fox | panel on **[BACnet](./BACnet/)** | proprietary, with no published specification; what can be verified is the banner and the exposure |
-| Ethernet POWERLINK | no sheet | a machine-internal real-time bus with no IP routing, no NSM parser and no public threat history |
-| LonTalk (ISO/IEC 14908) | no sheet | a declining building installed base, normally reached through a Niagara or BACnet gateway that has a sheet |
-| LS XGT FEnet | no sheet | single-vendor and regional; open an issue if you run it |
+| S7comm-Plus | panel on **[S7comm](./S7comm/)** | the newer version of the same Siemens protocol, on the same port and found the same way |
+| IEC 61850 Sampled Values, R-GOOSE / R-SV | on **[GOOSE & SV](./IEC61850-GOOSE/)** | the same broadcast-style messaging, attacked the same way; R-GOOSE is simply GOOSE that can cross a router |
+| OPC DA (OPC Classic over DCOM) | panel on **[OPC UA](./OPCUA/)** | on the network it is ordinary Windows remote-procedure traffic, so it is a Windows problem more than an industrial one; OPC UA replaced it |
+| EtherCAT | panel on **[ADS / AMS](./ADS/)** | it runs inside a single machine where nobody captures traffic; you reach it through ADS |
+| Niagara Fox | panel on **[BACnet](./BACnet/)** | no public specification exists, so only how it appears on the internet can be checked |
+| Ethernet POWERLINK | no sheet | it runs inside a single machine, has no monitoring tool support and no known attacks |
+| LonTalk (ISO/IEC 14908) | no sheet | an older building protocol, now usually reached through a Niagara or BACnet system that has a sheet |
+| LS XGT FEnet | no sheet | used by one vendor, mostly in one region; open an issue if you run it |
 
 </details>
 
